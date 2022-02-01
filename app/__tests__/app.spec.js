@@ -1,11 +1,10 @@
 import React from "react";
-import CheckBox from "../CheckBox";
+import App from "../App";
 
 import {
   fireEvent,
   render,
   screen,
-  act,
   waitFor,
   cleanup,
 } from "@testing-library/react";
@@ -15,99 +14,58 @@ afterEach(() => {
   cleanup();
 });
 
-test("first - render page and modify name", async () => {
+/**
+ * When name (or) checkbox are toggled, the component has sleep functions to delay the state changes and hence I'm trying to simulate the delay
+ * while running the test cases
+ */
+test("first test case - render page and modify name and checkbox", async () => {
+  // setting timeout to 10sec to make sure that the test case will time out before completing
   jest.setTimeout(1000);
-  render(<CheckBox />);
-
   
-  await screen.findByLabelText("john");
-
-  // screen.debug();
+  render(<App />);
+  
+  await waitFor(() => {
+    expect(screen.getByLabelText("john")).toBeInTheDocument();
+  });
 
   const nameInput = await screen.findByLabelText("john");
-  act(() => {
-    fireEvent.change(nameInput, { target: { value: "grisham" } });
+
+  //firing event to change the input name
+  fireEvent.change(nameInput, { target: { value: "grisham" } });
+
+  await waitFor(() => {
+    expect(screen.getByLabelText("grisham")).toBeInTheDocument();
   });
 
-  
-  await screen.findByLabelText("grisham");
-  // expect(await screen.findByLabelText("true");
+  let label = screen.getByLabelText("false");
 
-  let label = await screen.findByLabelText("false");
+  //firing event to change the App
+  fireEvent.click(label);
 
-  // screen.debug();
-  act(() => {
-    fireEvent.click(label);
+  await waitFor(() => {
+    expect(screen.getByLabelText("true")).toBeInTheDocument();
   });
-
-  // expect(await screen.findByLabelText("true");
-  
-  await screen.findByLabelText("true");
 });
 
-test("second - renders page and modify check box", async () => {
+test("second test case - render page and modify name and checkbox", async () => {
+  // setting timeout to default to make sure that the test case will pass
   jest.setTimeout(5000);
-  render(<CheckBox />);
+  
+  render(<App />);
+  
   let nameInput = await screen.findByLabelText("john");
-  act(() => {
-    fireEvent.change(nameInput, { target: { value: "second test" } });
+
+  fireEvent.change(nameInput, { target: { value: "grisham2, the second" } });
+
+  await waitFor(() => {
+    expect(screen.getByLabelText("grisham2, the second")).toBeInTheDocument();
   });
 
-  
-  await screen.findByLabelText("second test");
+  let label = screen.getByLabelText("false");
 
-  
-  await screen.findByLabelText("false");
+  fireEvent.click(label);
 
-  let label = await screen.findByLabelText("false");
-
-  // screen.debug();
-  act(() => {
-    fireEvent.click(label);
+  await waitFor(() => {
+    expect(screen.getByLabelText("true")).toBeInTheDocument();
   });
-
-  // expect(await screen.findByLabelText("true");
-  
-  await screen.findByLabelText("true");
-
-  act(() => {
-    fireEvent.click(label);
-  });
-
-  // expect(await screen.findByLabelText("true");
-  
-  await screen.findByLabelText("true");
-  act(() => {
-    fireEvent.click(label);
-  });
-
-  // expect(await screen.findByLabelText("true");
-  
-  await screen.findByLabelText("true");
-
-  act(() => {
-    fireEvent.click(label);
-  });
-
-  // expect(await screen.findByLabelText("true");
-  
-  await screen.findByLabelText("true");
-
-  // act(() => {
-  //   fireEvent.click(label);
-  // });
-
-  // // expect(await screen.findByLabelText("true");
-  // 
-  //   expect(screen.findByLabelText("true");
-  // });
-
-  // nameInput = screen.findByLabelText("john");
-  // act(() => {
-  //   fireEvent.change(nameInput, { target: { value: "grisham" } });
-  // });
-
-  // 
-  //   expect(screen.findByLabelText("grisham");
-  // });
 });
